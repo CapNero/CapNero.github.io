@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        function mostrarFormulario() {
+            document.getElementById('formulario').innerHTML = `
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre"><br>
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" name="cedula"><br>
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" name="email"><br>
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad"><br>
+                <label for="genero">Género:</label>
+                <input type="text" id="genero" name="genero"><br>
+                <button onclick="validarCampos()">Generar Perfil</button>
+            `;
+        }
+
+        function validarCampos() {
+            var nombre = document.getElementById('nombre').value;
+            var cedula = document.getElementById('cedula').value;
+            var email = document.getElementById('email').value;
+            var edad = document.getElementById('edad').value;
+            var genero = document.getElementById('genero').value;
+
+            if (nombre && cedula && email && edad && genero) {
+                verificarUsuario(nombre, cedula, email, edad, genero);
+            } else {
+                alert('Todos los campos son obligatorios');
+            }
+        }
+
+        function verificarUsuario(nombre, cedula, email, edad, genero) {
+            var listaUsuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            var usuarioExistente = listaUsuarios.find(usuario => usuario.cedula === cedula || usuario.email === email);
+
+            if (usuarioExistente) {
+                alert('El usuario ya está registrado.');
+            } else {
+                generarPerfil(nombre, cedula, email, edad, genero);
+            }
+        }
+
+        function generarPerfil(nombre, cedula, email, edad, genero) {
+            var usuario = {
+                nombre: nombre,
+                cedula: cedula,
+                email: email,
+                edad: edad,
+                genero: genero
+            };
+
+            var listaUsuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            listaUsuarios.push(usuario);
+            localStorage.setItem('usuarios', JSON.stringify(listaUsuarios));
+
+            var perfil = `
+                <h2>Perfil</h2>
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Cédula:</strong> ${cedula}</p>
+                <p><strong>Correo Electrónico:</strong> ${email}</p>
+                <p><strong>Edad:</strong> ${edad}</p>
+                <p><strong>Género:</strong> ${genero}</p>
+            `;
+            document.getElementById('perfil').innerHTML = perfil;
+            generarCodigoQR(`Nombre: ${nombre}, Cédula: ${cedula}, Email: ${email}, Edad: ${edad}, Género: ${genero}`);
+        }
+
+        function generarCodigoQR(datosPerfil) {
+            var qr = new QRious({
+                element: document.getElementById('qr'),
+                value: datosPerfil,
+                size: 200
+            });
+        }
+
+        window.onload = mostrarFormulario;
+    </script>
+</head>
+<body>
+    <div id="formulario"></div>
+    <div id="perfil"></div>
+    <canvas id="qr"></canvas>
+    <br>
+    <a href="usuarios.html">Ver Usuarios Registrados</a>
+</body>
+</html>

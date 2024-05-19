@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Registrados</title>
+    <style>
+        .user-box {
+            border: 1px solid #000;
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+    <script>
+        function mostrarUsuariosRegistrados() {
+            var listaUsuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            var contenedor = document.getElementById('usuarios-registrados');
+            contenedor.innerHTML = '';
+
+            listaUsuarios.forEach((usuario, index) => {
+                var recuadro = document.createElement('div');
+                recuadro.classList.add('user-box');
+                recuadro.innerHTML = `
+                    <p><strong>Nombre:</strong> ${usuario.nombre}</p>
+                    <p><strong>Cédula:</strong> ${usuario.cedula}</p>
+                    <p><strong>Correo Electrónico:</strong> ${usuario.email}</p>
+                    <p><strong>Edad:</strong> ${usuario.edad}</p>
+                    <p><strong>Género:</strong> ${usuario.genero}</p>
+                    <label>
+                        <input type="checkbox" id="usuario-${index}">
+                        Marcar
+                    </label>
+                `;
+                contenedor.appendChild(recuadro);
+            });
+        }
+
+        window.onload = mostrarUsuariosRegistrados;
+    </script>
+</head>
+<body>
+    <h2>Usuarios Registrados</h2>
+    <div id="usuarios-registrados"></div>
+    <br>
+    <a href="registro.html">Registrar Nuevo Usuario</a>
+</body>
+</html>
+
